@@ -10,6 +10,101 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
 
+const empType =
+    inquirer
+        .prompt([
+            {
+                type: "list",
+                message: "What type of Employee would you like to add?",
+                name: "classification",
+                choices: [
+                    "Manager",
+                    "Engineer",
+                    "Intern"
+                ]
+            }
+        ])
+
+const manager =
+    inquirer
+        .prompt([
+            {
+                type: "input",
+                name: "name",
+                message: "What is your name?"
+            },
+            {
+                type: "input",
+                name: "id",
+                message: "What is your ID?"
+            },
+            {
+                type: "input",
+                name: "email",
+                message: "What is your email address"
+            },
+            {
+                type: "input",
+                name: "office",
+                message: "What is your office number?"
+            }
+        ])
+
+const engineer =
+    inquirer
+        .prompt([
+            {
+                type: "input",
+                name: "name",
+                message: "What is your name?"
+            },
+            {
+                type: "input",
+                name: "id",
+                message: "What is your ID?"
+            },
+            {
+                type: "input",
+                name: "email",
+                message: "What is your email address"
+            },
+            {
+                type: "input",
+                name: "githubUn",
+                message: "What is your Github username?"
+            }
+        ])
+
+const intern =
+    inquirer
+        .prompt([
+            {
+                type: "input",
+                name: "name",
+                message: "What is your name?"
+            },
+            {
+                type: "input",
+                name: "id",
+                message: "What is your ID?"
+            },
+            {
+                type: "input",
+                name: "email",
+                message: "What is your email address"
+            },
+            {
+                type: "input",
+                name: "school",
+                message: "What Institution is your Internship hosted from?"
+            }
+        ])
+
+function init() {
+    inquirer.prompt(empType)
+}
+
+init(empType.choices);
 
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
