@@ -105,45 +105,18 @@ const collectInputs = async (inputs = []) => {
     return again ? collectInputs(newInputs) : newInputs;
 };
 
-const main = async () => {
+const init = async () => {
     const inputs = await collectInputs();
-    console.log(inputs);
+    const engineers = inputs.filter(inputs => inputs.empType === 'Engineer');
+    const interns = inputs.filter(inputs => inputs.empType === 'Intern');
+    const managers = inputs.filter(inputs => inputs.empType === 'Manager');
+    fs.writeFile("engineers.json",  JSON.stringify(engineers, null, ' '), err => err ? console.log("Error in writing engineers.json") : console.log("engineers.json written")); 
+    fs.writeFile("interns.json", JSON.stringify(interns, null, ' '), err => err ? console.log("Error in writing interns.json") : console.log("interns.json written")); 
+    fs.writeFile("manager.json", JSON.stringify(managers, null, ' '), err => err ? console.log("Error in writing manager.json") : console.log("manager.json written")); 
 };
 
-main();
+init();
 
-    // inquirer.prompt(questions).then((resp1) => {
-    //     if (resp1.empType === 'Manager') {
-    //         inquirer.prompt(specialQuestions[0]).then((resp2) => {
-    //             const manager = { ...resp1, ...resp2 };
-    //         });
-    //     } else if (resp1.empType === 'Engineer') {
-    //         inquirer.prompt(specialQuestions[1]).then((resp3) => {
-    //             const engineer = { ...resp1, ...resp3 };
-    //         });
-    //     } else {
-    //         inquirer.prompt(specialQuestions[2]).then((resp4) => {
-    //             const intern = { ...resp1, ...resp4 }
-    //         });
-    //     };
-//     });
-// };
-
-// function init() {
-//     inquirer.prompt(empType); 
-//         if(empType.choices === 'Manager') {
-//             inquirer.prompt(manager).then((inquirerResponses) => {
-//                 const answers = JSON.parse(inquirerResponses); 
-//                 const name = answers.name; 
-//                 const id = answers.id; 
-//                 const email = answers.email; 
-//                 const office = answers.office; 
-//                 const manager = new Manager(name, id, email, office); 
-
-//             }) 
-//     }
-
-// ask();
 
 
 
