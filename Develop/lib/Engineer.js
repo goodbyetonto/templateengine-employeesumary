@@ -9,6 +9,7 @@ class Engineer extends Employee {
     }
 
     getGithub() {
+        return this.github; 
 
     }
 
@@ -16,3 +17,5 @@ class Engineer extends Employee {
         return type; 
     }
 }
+
+module.exports = Engineer; 
