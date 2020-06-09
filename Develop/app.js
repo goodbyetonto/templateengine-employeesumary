@@ -1,7 +1,7 @@
 const Manager = require("./lib/Manager");
 const Engineer = require("./lib/Engineer");
 const Intern = require("./lib/Intern");
-const axios = require("axios"); 
+const axios = require("axios");
 const inquirer = require("inquirer");
 const path = require("path");
 const fs = require("fs");
@@ -10,27 +10,14 @@ const OUTPUT_DIR = path.resolve(__dirname, "output");
 const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
+const teamMembers = [];
+const idArray = [];
 
-function ask() {
-    const specialQuestions = [
-        {
-            type: "input", 
-            name: "office", 
-            message: "What is your office number?"
-        }, 
-        {
-            type: "input", 
-            name: "ghUn", 
-            message: "What is your Github Username?"
-        },
-        {
-            type: "input", 
-            name: "school", 
-            message: "What university are you graduating from?"
-        }
-    ]
+
+const collectInputs = async (inputs = []) => {
 
     const questions = [
+
         {
             type: "list",
             message: "What type of Employee would you like to add?",
@@ -41,39 +28,106 @@ function ask() {
                 "Intern"
             ]
         },
+
         {
             type: "input",
             name: "name",
-            message: "What is your name?"
+            message: "What is your name?",
+            validate: answer => {
+                if (answer !== '') {
+                    return true;
+                }
+                return 'Please enter an actual name'; 
+            }
         },
+
         {
             type: "input",
             name: "id",
-            message: "What is your ID?"
+            message: "What is your ID?", 
+            validate: answer => {
+                const pass = answer.match(
+                    /^[1-9]\d*$/
+                );
+                if (pass) {
+                    return true;
+                }
+                return 'Please enter an actual ID#';
+            }
         },
+
         {
             type: "input",
             name: "email",
-            message: "What is your email address"
-        }
-    ]
+            message: "What is your email address", 
+            validate: answer => {
+                const pass = answer.match(
+                    /\S+@\S+\.\S+/
+                );
+                if (pass) {
+                    return true;
+                }
+                return 'Please enter an actual email address';
+            }
+        },
 
-    inquirer.prompt(questions).then((resp1) => { 
-        if(resp1.empType === 'Manager') {
-            inquirer.prompt(specialQuestions[0]).then((resp2) => {
-                const manager = {...resp1, ...resp2}; 
-            });
-        } else if(resp1.empType === 'Engineer') {
-            inquirer.prompt(specialQuestions[1]).then((resp3) => {
-                const engineer = {...resp1, ...resp3}; 
-            });
-        } else {
-            inquirer.prompt(specialQuestions[2]).then((resp4) => {
-                const intern = {...resp1, ...resp4}
-            }); 
-        }; 
-    });
+        {
+            type: "input", 
+            name: "officeNumber", 
+            message: "What is your office number?", 
+            when: (questions) => questions.empType === 'Manager'
+        },
+
+        {
+            type: "input", 
+            name: "ghUn", 
+            message: "What is your Github Username?", 
+            when: (questions) => questions.empType === 'Engineer'
+        },
+
+        {
+            type: "input", 
+            name: "school", 
+            message: "What University will you be graduating from?", 
+            when: (questions) => questions.empType === 'Intern'
+        },
+
+        {
+            type: 'confirm',
+            name: 'again',
+            message: 'Enter another input? ',
+            default: true
+        }
+    ];
+
+    const { again, ...answers } = await inquirer.prompt(questions);
+    const newInputs = [...inputs, answers];
+    return again ? collectInputs(newInputs) : newInputs;
 };
+
+const main = async () => {
+    const inputs = await collectInputs();
+    console.log(inputs);
+};
+
+main();
+
+    // inquirer.prompt(questions).then((resp1) => {
+    //     if (resp1.empType === 'Manager') {
+    //         inquirer.prompt(specialQuestions[0]).then((resp2) => {
+    //             const manager = { ...resp1, ...resp2 };
+    //         });
+    //     } else if (resp1.empType === 'Engineer') {
+    //         inquirer.prompt(specialQuestions[1]).then((resp3) => {
+    //             const engineer = { ...resp1, ...resp3 };
+    //         });
+    //     } else {
+    //         inquirer.prompt(specialQuestions[2]).then((resp4) => {
+    //             const intern = { ...resp1, ...resp4 }
+    //         });
+    //     };
+//     });
+// };
 
 // function init() {
 //     inquirer.prompt(empType); 
@@ -89,7 +143,7 @@ function ask() {
 //             }) 
 //     }
 
-ask();
+// ask();
 
 
 
