@@ -1,7 +1,6 @@
 const Manager = require("./lib/Manager");
 const Engineer = require("./lib/Engineer");
 const Intern = require("./lib/Intern");
-const axios = require("axios");
 const inquirer = require("inquirer");
 const path = require("path");
 const fs = require("fs");
@@ -10,9 +9,6 @@ const OUTPUT_DIR = path.resolve(__dirname, "output");
 const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
-const teamMembers = [];
-const idArray = [];
-
 
 const collectInputs = async (inputs = []) => {
 
@@ -32,7 +28,7 @@ const collectInputs = async (inputs = []) => {
         {
             type: "input",
             name: "name",
-            message: "What is your name?",
+            message: "What is this employee's name?",
             validate: answer => {
                 if (answer !== '') {
                     return true;
@@ -44,7 +40,7 @@ const collectInputs = async (inputs = []) => {
         {
             type: "input",
             name: "id",
-            message: "What is your ID?", 
+            message: "What is their ID number?", 
             validate: answer => {
                 const pass = answer.match(
                     /^[1-9]\d*$/
@@ -59,7 +55,7 @@ const collectInputs = async (inputs = []) => {
         {
             type: "input",
             name: "email",
-            message: "What is your email address", 
+            message: "What is their email address", 
             validate: answer => {
                 const pass = answer.match(
                     /\S+@\S+\.\S+/
@@ -107,16 +103,38 @@ const collectInputs = async (inputs = []) => {
 
 const init = async () => {
     const inputs = await collectInputs();
+    const employees = [];
+
     const engineers = inputs.filter(inputs => inputs.empType === 'Engineer');
     const interns = inputs.filter(inputs => inputs.empType === 'Intern');
     const managers = inputs.filter(inputs => inputs.empType === 'Manager');
-    fs.writeFile("engineers.json",  JSON.stringify(engineers, null, ' '), err => err ? console.log("Error in writing engineers.json") : console.log("engineers.json written")); 
-    fs.writeFile("interns.json", JSON.stringify(interns, null, ' '), err => err ? console.log("Error in writing interns.json") : console.log("interns.json written")); 
-    fs.writeFile("manager.json", JSON.stringify(managers, null, ' '), err => err ? console.log("Error in writing manager.json") : console.log("manager.json written")); 
+
+    engineers.forEach(engineer => {
+        employees.push(new Engineer(engineer.name, engineer.id, engineer.email, engineer.ghUn));
+    });
+
+    interns.forEach(intern => {
+        employees.push(new Intern(intern.name, intern.id, intern.email, intern.school));
+    });
+
+    managers.forEach(manager => {
+        employees.push(new Manager(manager.name, manager.id, manager.email, manager.officeNumber));
+    });
+
+    console.log(employees); 
+
+    const employeeHtml = render(employees);
+
+    fs.writeFile(outputPath, employeeHtml, err => err ? console.log("HTML was rendered!") : console.log("There was an error during HTML rendering!")); 
+
+    // fs.writeFile(outputPath, html, err => err ? console.log("Error in rendering HTML!") : console.log("HTML was rendered!")); 
+    // fs.writeFile("engineers.json",  JSON.stringify(engineers, null, ' '), err => err ? console.log("Error in writing engineers.json") : console.log("engineers.json written")); 
+    // fs.writeFile("interns.json", JSON.stringify(interns, null, ' '), err => err ? console.log("Error in writing interns.json") : console.log("interns.json written")); 
+    // fs.writeFile("manager.json", JSON.stringify(managers, null, ' '), err => err ? console.log("Error in writing manager.json") : console.log("manager.json written"));
+    
 };
 
 init();
-
 
 
 
